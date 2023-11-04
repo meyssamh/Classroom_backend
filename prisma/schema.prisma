@@ -1,0 +1,78 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "sqlserver"
+    url      = env("DATABASE_URL")
+}
+
+model Teacher {
+    id             BigInt         @id @unique @default(autoincrement())
+    createdAt      DateTime       @default(now())
+    firstname      String?        @db.NVarChar(50)
+    lastname       String?        @db.NVarChar(50)
+    username       String         @unique @db.NVarChar(50)
+    email          String         @unique @db.NVarChar(255)
+    password       String         @db.NVarChar(MAX)
+    teacherClasses TeacherClass[]
+}
+
+model TeacherClass {
+    id         BigInt  @id @unique @default(autoincrement())
+    teacher    Teacher @relation(fields: [teacher_Id], references: [id])
+    teacher_Id BigInt
+    class      Class   @relation(fields: [class_Id], references: [id])
+    class_Id   BigInt
+}
+
+model Class {
+    id             BigInt         @id @unique @default(autoincrement())
+    createdAt      DateTime       @default(now())
+    classname      String         @db.NVarChar(100)
+    classStudents  ClassStudent[]
+    classSessions  ClassSession[]
+    teacherClasses TeacherClass[]
+}
+
+model ClassStudent {
+    id         BigInt  @id @unique @default(autoincrement())
+    class      Class   @relation(fields: [class_Id], references: [id])
+    class_Id   BigInt
+    student    Student @relation(fields: [student_Id], references: [id])
+    student_Id BigInt
+}
+
+model Student {
+    id           BigInt         @id @unique @default(autoincrement())
+    createdAt    DateTime       @default(now())
+    firstname    String         @db.NVarChar(50)
+    lastname     String         @db.NVarChar(50)
+    ClassStudent ClassStudent[]
+}
+
+model ClassSession {
+    id         BigInt  @id @unique @default(autoincrement())
+    class      Class   @relation(fields: [class_Id], references: [id])
+    class_Id   BigInt
+    session    Session @relation(fields: [session_Id], references: [id])
+    session_Id BigInt
+}
+
+model Session {
+    id            BigInt         @id @unique @default(autoincrement())
+    createdAt     DateTime       @default(now())
+    date          DateTime       @default(now())
+    situation     String         @db.NVarChar(MAX)
+    classSessions ClassSession[]
+}
+
+model HistoryLog {
+    id         BigInt   @id @unique @default(autoincrement())
+    createdAt  DateTime @default(now())
+    teacher_Id BigInt
+    activity   String   @db.NVarChar(MAX)
+}
