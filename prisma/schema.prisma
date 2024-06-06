@@ -6,18 +6,18 @@ generator client {
 }
 
 datasource db {
-    provider = "sqlserver"
+    provider = "postgresql"
     url      = env("DATABASE_URL")
 }
 
 model Teacher {
     id             BigInt         @id @unique @default(autoincrement())
     createdAt      DateTime       @default(now())
-    firstname      String?        @db.NVarChar(50)
-    lastname       String?        @db.NVarChar(50)
-    username       String         @unique @db.NVarChar(50)
-    email          String         @unique @db.NVarChar(255)
-    password       String         @db.NVarChar(MAX)
+    firstname      String?        @db.VarChar(50)
+    lastname       String?        @db.VarChar(50)
+    username       String         @unique @db.VarChar(50)
+    email          String         @unique @db.VarChar(255)
+    password       String         @db.VarChar(60000)
     teacherClasses TeacherClass[]
 }
 
@@ -32,7 +32,7 @@ model TeacherClass {
 model Class {
     id             BigInt         @id @unique @default(autoincrement())
     createdAt      DateTime       @default(now())
-    classname      String         @db.NVarChar(100)
+    classname      String         @db.VarChar(100)
     classStudents  ClassStudent[]
     classSessions  ClassSession[]
     teacherClasses TeacherClass[]
@@ -49,8 +49,8 @@ model ClassStudent {
 model Student {
     id           BigInt         @id @unique @default(autoincrement())
     createdAt    DateTime       @default(now())
-    firstname    String         @db.NVarChar(50)
-    lastname     String         @db.NVarChar(50)
+    firstname    String         @db.VarChar(50)
+    lastname     String         @db.VarChar(50)
     ClassStudent ClassStudent[]
 }
 
@@ -66,7 +66,7 @@ model Session {
     id            BigInt         @id @unique @default(autoincrement())
     createdAt     DateTime       @default(now())
     date          DateTime       @default(now())
-    situation     String         @db.NVarChar(MAX)
+    situation     String         @db.VarChar(60000)
     classSessions ClassSession[]
 }
 
@@ -74,5 +74,5 @@ model HistoryLog {
     id         BigInt   @id @unique @default(autoincrement())
     createdAt  DateTime @default(now())
     teacher_Id BigInt
-    activity   String   @db.NVarChar(MAX)
+    activity   String   @db.VarChar(60000)
 }
